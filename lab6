@@ -1,0 +1,373 @@
+using System;
+using System.Threading;
+
+namespace lab6
+{
+    internal class Program
+    {
+        public interface Worker 
+        {
+            string Name { get; set; }
+            int Age { get; set; }
+            string Post { get; set; }
+
+            void show();
+            void work();
+            
+        }
+
+        class HR : Worker
+        {
+            private string name;
+            private int age;
+            private int managedEmployees;
+            private string post;
+            
+            public string Name { get; set; }
+            public int Age { get; set; }
+            public int ManagedEmployees { get; set; }
+            public string Post { get; set; }
+
+            public HR(string n, int a, string p, int m)
+            { 
+                if(a<0 || a > 100)
+                {
+                    throw new InvalidAgeException();
+                    
+                }
+                name = n;
+                age = a;
+                post = p;
+                managedEmployees = m;
+                
+            }
+
+            public void show()
+            {
+                Console.WriteLine("Вiддiл Кадрiв :" + this.name + "  Вiк:" + this.age + "  Кiлькiсть найманих працiвникiв:" + this.managedEmployees);
+            }
+            public void work()
+            {
+                Console.WriteLine("Працiвник з вiддiлу кадрiв проводить спiвбесiду ");
+            }
+
+            ~HR()
+            {
+                Console.WriteLine("Знищується об'єкт HR");
+            }
+        }
+
+        class Administration : Worker
+        {
+            private string name;
+            private int age;
+            private string post;
+
+            public string Name { get; set; }
+            public int Age { get; set; }
+            public string Post { get; set; }
+
+            public Administration(string n, int a, string p)
+            {
+                if (a < 0 || a > 100)
+                {
+                    throw new InvalidAgeException();
+
+                }
+                name = n;
+                age = a;
+                post = p;
+            }
+
+            public void show()
+            {
+                Console.WriteLine("Адмiнiстрацiя : Посада "+ this.post+ "  "  + this.name + "  Вiк:" + this.age);
+
+            }
+            public void work()
+            {
+                Console.WriteLine("Працiвник з адмiнiстрацiї працює");
+            }
+
+            ~Administration()
+            {
+                Console.WriteLine("Знищується об'єкт Administration");
+            }   
+        }
+
+        class Engineer : Worker, IComparable
+            {
+                private string name;
+                private int age;
+                private string post;
+                private string specialty;
+
+                public string Name { get; set; }
+                public int Age { get; set; }
+                public string Post { get; set; }
+                public string Specialty { get; set; }
+
+                public Engineer(string n, int a, string p, string s )
+                {
+                    if (a < 0 || a > 100)
+                    {
+                        throw new InvalidAgeException();
+
+                    }
+
+                    name = n;
+                    age = a;
+                    post = p;
+                    specialty = s;
+                }
+
+                public void show()
+                {
+                    Console.WriteLine("Iнженер : Посада" + this.post + "  " + this.name + "  Вiк:" + this.age + "  Спецiалiзацiя:" + this.specialty);
+
+                }
+                public void work()
+                {
+                    Console.WriteLine("Iнженер працює");
+                }
+
+            public int CompareTo(object obj)
+            {
+                // Перевіряємо, чи об'єкт є інженером
+                if (obj == null) return 1;
+
+                Engineer otherEngineer = obj as Engineer;
+                if (otherEngineer != null)
+                {
+                    if (this.age > otherEngineer.age) return 1;
+                    if (this.age < otherEngineer.age) return -1;
+                    return 0;
+                }
+                else
+                {
+                    throw new ArgumentException("Об'єкт не є інженером");
+                }
+            }
+
+            ~Engineer()
+                {
+                    Console.WriteLine("Знищується об'єкт Engineer");
+                }
+
+            }
+
+
+/// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        public interface IPhoneBook
+        {
+            string Name { get; set; }
+            string Address { get; set; }
+            string TelephoneNumber { get; set; }
+            void PrintAllInfo();
+        }
+
+        public class Person : IPhoneBook
+        {
+            public string Name { get; set; }
+            public string Address { get; set; }
+            public string TelephoneNumber { get; set; }
+
+            public Person(string name, string address, string telephoneNumber)
+            {
+                Name = name;
+                Address = address;
+                TelephoneNumber = telephoneNumber;
+                Console.WriteLine("Створено об'єкт Person");
+            }
+
+            public void PrintAllInfo()
+            {
+                Console.WriteLine($"Iм'я: {Name}, Телефон: {TelephoneNumber}, Адреса: {Address}");
+            }
+        }
+
+        public class Organisation : IPhoneBook
+        {
+            public string Name { get; set; }
+            public string Address { get; set; }
+            public string TelephoneNumber { get; set; }
+            public Person ContactPerson { get; set; }
+
+            public Organisation(string name, string address, string telephoneNumber, Person contactPerson)
+            {
+                Name = name;
+                Address = address;
+                TelephoneNumber = telephoneNumber;
+                ContactPerson = contactPerson;
+                Console.WriteLine("Створено об'єкт Organisation");
+            }
+
+            public void PrintAllInfo()
+            {
+                Console.WriteLine($"Органiзацiя Назва: {Name}, Телефон: {TelephoneNumber}, Адреса: {Address}, Контактна особа: {ContactPerson?.Name}");
+            }
+        }
+
+        public class Friend : IPhoneBook
+        {
+            public string Name { get; set; }
+            public string Address { get; set; }
+            public string TelephoneNumber { get; set; }
+            public DateTime BirthDate { get; set; }
+
+            public Friend(string name, string address, string telephoneNumber, DateTime birthDate)
+            {
+                Name = name;
+                Address = address;
+                TelephoneNumber = telephoneNumber;
+                BirthDate = birthDate;
+                Console.WriteLine("Створено об'єкт Friend" + this.Name);
+            }
+
+            public void PrintAllInfo()
+            {
+                Console.WriteLine($" Наш друг: Iм'я: {Name}, Телефон: {TelephoneNumber}, Адреса: {Address}, День народження: {BirthDate:yyyy-MM-dd}");
+            }
+        }
+
+        public class PhoneBookManager
+        {
+            private List<IPhoneBook> phoneBook;
+
+            public PhoneBookManager()
+            {
+                phoneBook = new List<IPhoneBook>();
+            }
+
+            public void AddToPhoneBook(IPhoneBook o)
+            {
+                phoneBook.Add(o);
+                Console.WriteLine($"{o.Name} додано до телефонного довiдника");
+            }
+
+            public void PrintAll()
+            {
+                foreach (var entry in phoneBook)
+                {
+                    entry.PrintAllInfo();
+                }
+            }
+        }
+
+//// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        public class InvalidAgeException: Exception
+        {
+            public InvalidAgeException() : base("Ви ввели неправильний вік") { }
+        }
+
+        class Animal
+        {
+            public virtual void Speak()
+            {
+                Console.WriteLine("Тварина видає звук.");
+            }
+        }
+
+        class Dog : Animal
+        {
+            public override void Speak()
+            {
+                Console.WriteLine("Собака гавкає.");
+            }
+        }
+
+        class Cat : Animal
+        {
+            public override void Speak()
+            {
+                Console.WriteLine("Кіт нявкає.");
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            task1();
+            //task2();
+            //task3();
+            //task4();
+        }
+
+        public static void task1()
+        {
+            Console.WriteLine("Завдання  1");
+            try
+            {
+                HR hr = new HR("Олексiй", 58, "HR-менеджер", 10);
+                Administration admin = new Administration("Марина", 42, "Директор");
+                Engineer eng = new Engineer("Андрiй", 29, "Головний iнженер", "Механiка");
+
+                hr.show();
+                admin.show();
+                eng.show();
+                hr.work();
+                admin.work();
+                eng.work();
+            }
+            catch (InvalidAgeException ex)
+            {
+                Console.WriteLine($"Помилка: {ex.Message}");
+            }
+        }
+        public static void task2()
+        {
+            PhoneBookManager phoneBookManager = new PhoneBookManager();
+
+            Person person = new Person("Iван", "Київ", "12345");
+            Organisation org = new Organisation("Банк", "Київ", "67890", person);
+            Friend friend = new Friend("Олена", "Львiв", "54321", new DateTime(1990, 5, 20));
+
+            phoneBookManager.AddToPhoneBook(person);
+            phoneBookManager.AddToPhoneBook(org);
+            phoneBookManager.AddToPhoneBook(friend);
+
+            phoneBookManager.PrintAll();
+        }
+        public static void task3()
+        {
+            try
+            {
+                Animal myAnimal = new Dog(); // Фактичний об'єкт - Dog
+                Cat myCat = (Cat)myAnimal; //  InvalidCastException
+                myCat.Speak();
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine("Помилка приведення типу: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Інша помилка: " + ex.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Програма завершила виконання.");
+            }
+        }
+        public static void task4()
+        {
+            Engineer[] engineers = new Engineer[3];
+            engineers[0] = new Engineer("Андрiй", 29, "Головний iнженер", "Механiка");
+            engineers[1] = new Engineer("Микола", 40, "Початківець iнженер", "ОВК");
+            engineers[2] = new Engineer("Олександр", 33, "Інженер - менеджер", "Електрика");
+
+            // Сортуємо масив інженерів за віком
+            Array.Sort(engineers);
+
+            // Виводимо відсортований масив
+            foreach (Engineer e in engineers)
+            {
+                e.show();
+            }
+
+
+        }
+    }
+}
